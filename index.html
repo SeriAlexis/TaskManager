@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Планировщик задач</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+const TASK_COLORS = [
+  { name: 'Терракота', hex: '#E2570F' },
+  { name: 'Бирюза', hex: '#1B9E82' },
+  { name: 'Слива', hex: '#95479A' },
+  { name: 'Охра', hex: '#E2A324' },
+  { name: 'Индиго', hex: '#4569E0' },
+  { name: 'Кирпич', hex: '#C4453F' },
+  { name: 'Хвоя', hex: '#4A9E3E' },
+  { name: 'Олива', hex: '#9C9631' },
+];
+
+const MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const WEEKDAYS = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+function toKey(y,m,d){ return `${y}-${pad(m+1)}-${pad(d)}`; }
+function todayKey(){ const t = new Date(); return toKey(t.getFullYear(), t.getMonth(), t.getDate()); }
+function formatShort(key){
+  if(!key) return '';
+  const [y,m,d] = key.split('-');
+  return `${d}.${m}.${y}`;
+}
+function countDaysBetween(start,end){
+  const s = new Date(start+'T00:00:00');
+  const e = new Date(end+'T00:00:00');
+  return Math.round((e-s)/86400000)+1;
+}
+function getMonthGrid(y,m){
+  const firstDayIdx = (new Date(y,m,1).getDay()+6)%7;
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const cells = [];
+  for(let i=0;i<firstDayIdx;i++) cells.push(null);
+  for(let d=1;d<=daysInMonth;d++) cells.push(d);
+  while(cells.length % 7 !== 0) cells.push(null);
+  return cells;
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+function loadLocal(key, fallback){
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch(e){ return fallback; }
+}
+function saveLocal(key, value){
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch(e){}
+}
+
+const INK = '#241F18';
+const MUTED = '#8B8272';
+const ACCENT = '#2F6F62';
+const PAGE_BG = '#E8E4D8';
+const CARD_BG = '#FBFAF6';
+const BORDER = '#D7D0BE';
+
+function App(){
+  const now = new Date();
+  const [view, setView] = useState({ y: now.getFullYear(), m: now.getMonth() });
+  const [tasks, setTasks] = useState(() => loadLocal('planner-tasks', []));
+  const [events, setEvents] = useState(() => loadLocal('planner-events', []));
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showEventForm, setShowEventForm] = useState(false);
+  const [planningTaskId, setPlanningTaskId] = useState(null);
+  const [taskDraft, setTaskDraft] = useState({ name:'', start:'', end:'', color: TASK_COLORS[0].hex });
+  const [eventDraft, setEventDraft] = useState({ name:'', date:'', color: TASK_COLORS[0].hex });
+  const [taskErr, setTaskErr] = useState('');
+  const [eventErr, setEventErr] = useState('');
+
+  useEffect(() => { saveLocal('planner-tasks', tasks); }, [tasks]);
+  useEffect(() => { saveLocal('planner-events', events); }, [events]);
+
+  const grid = getMonthGrid(view.y, view.m);
+  const today = todayKey();
+
+  function changeMonth(delta){
+    let m = view.m + delta, y = view.y;
+    if(m < 0){ m = 11; y--; }
+    if(m > 11){ m = 0; y++; }
+    setView({ y, m });
+  }
+
+  function openEventFormForDate(dateKey){
+    setEventDraft({ name:'', date: dateKey, color: TASK_COLORS[0].hex });
+    setEventErr('');
+    setShowEventForm(true);
+  }
+
+  function handleCellClick(dateKey){
+    if(planningTaskId){
+      const task = tasks.find(t => t.id === planningTaskId);
+      if(!task) return;
+      if(dateKey < task.start || dateKey > task.end) return;
+      setTasks(prev => prev.map(t => {
+        if(t.id !== planningTaskId) return t;
+        const has = t.plannedDays.includes(dateKey);
+        return { ...t, plannedDays: has ? t.plannedDays.filter(d => d !== dateKey) : [...t.plannedDays, dateKey] };
+      }));
+    } else {
+      openEventFormForDate(dateKey);
+    }
+  }
+
+  function submitTask(){
+    if(!taskDraft.name.trim()){ setTaskErr('Введите название задачи'); return; }
+    if(!taskDraft.start || !taskDraft.end){ setTaskErr('Укажите начало и дедлайн'); return; }
+    if(taskDraft.end < taskDraft.start){ setTaskErr('Дедлайн раньше начала'); return; }
+    setTasks(prev => [...prev, { id: uid(), name: taskDraft.name.trim(), start: taskDraft.start, end: taskDraft.end, color: taskDraft.color, plannedDays: [] }]);
+    setTaskDraft({ name:'', start:'', end:'', color: TASK_COLORS[(tasks.length+1) % TASK_COLORS.length].hex });
+    setTaskErr('');
+    setShowTaskForm(false);
+  }
+
+  function submitEvent(){
+    if(!eventDraft.name.trim()){ setEventErr('Введите название дела'); return; }
+    if(!eventDraft.date){ setEventErr('Укажите дату'); return; }
+    setEvents(prev => [...prev, { id: uid(), name: eventDraft.name.trim(), date: eventDraft.date, color: eventDraft.color }]);
+    setEventErr('');
+    setShowEventForm(false);
+  }
+
+  function deleteTask(id){
+    setTasks(prev => prev.filter(t => t.id !== id));
+    if(planningTaskId === id) setPlanningTaskId(null);
+  }
+  function deleteEvent(id){
+    setEvents(prev => prev.filter(e => e.id !== id));
+  }
+
+  const planningTask = tasks.find(t => t.id === planningTaskId);
+
+  return (
+    <div style={{ background: PAGE_BG, color: INK, minHeight: '100vh', fontFamily: 'ui-sans-serif, system-ui, sans-serif' }} className="p-4 sm:p-8">
+      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
+
+        <div className="flex-1 min-w-0">
+          <div style={{ background: CARD_BG, border: `1px solid ${BORDER}` }} className="rounded-lg p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-5">
+              <button onClick={() => changeMonth(-1)} style={{ border: `1px solid ${BORDER}` }} className="px-3 py-1.5 rounded-md hover:opacity-70 transition text-lg">‹</button>
+              <h1 style={{ fontFamily: 'Georgia, serif' }} className="text-xl sm:text-2xl font-semibold tracking-wide">{MONTHS[view.m]} {view.y}</h1>
+              <button onClick={() => changeMonth(1)} style={{ border: `1px solid ${BORDER}` }} className="px-3 py-1.5 rounded-md hover:opacity-70 transition text-lg">›</button>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 mb-1">
+              {WEEKDAYS.map(w => <div key={w} style={{ color: MUTED }} className="text-center text-xs font-medium py-1">{w}</div>)}
+            </div>
+
+            <div className="grid grid-cols-7 gap-1">
+              {grid.map((d, i) => {
+                if(d === null) return <div key={i} className="h-20 sm:h-24 rounded-md" style={{ background: 'transparent' }} />;
+                const dateKey = toKey(view.y, view.m, d);
+                const tasksInRange = tasks.filter(t => dateKey >= t.start && dateKey <= t.end);
+                const plannedToday = tasksInRange.filter(t => t.plannedDays.includes(dateKey));
+                const eventsToday = events.filter(e => e.date === dateKey);
+                const isToday = dateKey === today;
+                const isPlannableHere = planningTask && dateKey >= planningTask.start && dateKey <= planningTask.end;
+
+                const ringShadows = tasksInRange.slice(0,3).map((t, idx) => `inset 0 0 0 ${3 + idx*4}px ${t.color}`);
+                let background = 'transparent';
+                if(plannedToday.length === 1){
+                  background = plannedToday[0].color;
+                } else if(plannedToday.length > 1){
+                  const n = plannedToday.length;
+                  const stops = plannedToday.map((t, idx) => `${t.color} ${(idx*100/n).toFixed(1)}%, ${t.color} ${((idx+1)*100/n).toFixed(1)}%`).join(', ');
+                  background = `linear-gradient(135deg, ${stops})`;
+                }
+                const filled = plannedToday.length > 0;
+
+                return (
+                  <div
+                    key={i}
+                    onClick={() => handleCellClick(dateKey)}
+                    style={{
+                      background,
+                      boxShadow: ringShadows.length ? ringShadows.join(', ') : (isToday ? `inset 0 0 0 2px ${ACCENT}` : `inset 0 0 0 1px ${BORDER}`),
+                      cursor: (planningTask ? (isPlannableHere ? 'pointer' : 'default') : 'pointer'),
+                      opacity: planningTask && !isPlannableHere ? 0.45 : 1,
+                    }}
+                    className="h-20 sm:h-24 rounded-md p-1.5 flex flex-col justify-between overflow-hidden relative"
+                  >
+                    <span style={{ color: filled ? '#fff' : (isToday ? ACCENT : INK), fontWeight: isToday ? 700 : 500 }} className="text-xs sm:text-sm leading-none">{d}</span>
+                    <div className="flex flex-col gap-0.5 mt-auto">
+                      {eventsToday.slice(0,2).map(e => (
+                        <span key={e.id} title={e.name} style={{ background: e.color, color: '#fff' }} className="text-[10px] leading-tight rounded px-1 py-0.5 truncate">{e.name}</span>
+                      ))}
+                      {eventsToday.length > 2 && <span style={{ color: filled ? '#fff' : MUTED }} className="text-[10px]">+{eventsToday.length - 2}</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {planningTask && (
+              <div style={{ background: '#F1EEE2', border: `1px solid ${BORDER}` }} className="mt-4 rounded-md p-3 flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2 text-sm">
+                  <span style={{ background: planningTask.color }} className="w-2.5 h-2.5 rounded-full inline-block" />
+                  <span>Режим планирования: <b>{planningTask.name}</b>. Кликайте по дням внутри рамки, чтобы отметить их полной заливкой.</span>
+                </div>
+                <button onClick={() => setPlanningTaskId(null)} style={{ background: ACCENT, color: '#fff' }} className="text-sm px-3 py-1.5 rounded-md shrink-0">✓ Готово</button>
+              </div>
+            )}
+            {!planningTask && (
+              <p style={{ color: MUTED }} className="text-xs mt-4">Клик по дню создаёт разовое дело на эту дату. Чтобы распланировать дни задачи — нажмите «Планировать» у нужной задачи справа.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="w-full lg:w-80 shrink-0 flex flex-col gap-4">
+          <div style={{ background: CARD_BG, border: `1px solid ${BORDER}` }} className="rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold">▤ Задачи</h2>
+              <button
+                onClick={() => { setTaskDraft({ name:'', start: today, end: today, color: TASK_COLORS[tasks.length % TASK_COLORS.length].hex }); setTaskErr(''); setShowTaskForm(true); }}
+                style={{ border: `1px solid ${BORDER}` }}
+                className="w-7 h-7 rounded-md hover:opacity-70 flex items-center justify-center"
+              >+</button>
+            </div>
+            {tasks.length === 0 && <p style={{ color: MUTED }} className="text-xs">Пока нет ни одной задачи.</p>}
+            <div className="flex flex-col gap-2">
+              {tasks.map(t => {
+                const total = countDaysBetween(t.start, t.end);
+                const planned = t.plannedDays.length;
+                const isPlanning = planningTaskId === t.id;
+                return (
+                  <div key={t.id} style={{ border: `1px solid ${BORDER}`, background: isPlanning ? '#F1EEE2' : 'transparent' }} className="rounded-md p-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start gap-2 min-w-0">
+                        <span style={{ background: t.color }} className="w-2.5 h-2.5 rounded-full inline-block mt-1 shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{t.name}</p>
+                          <p style={{ color: MUTED }} className="text-xs">{formatShort(t.start)} – {formatShort(t.end)}</p>
+                          <p style={{ color: MUTED }} className="text-xs">{planned} / {total} дн. запланировано</p>
+                        </div>
+                      </div>
+                      <button onClick={() => deleteTask(t.id)} className="shrink-0 hover:opacity-60">✕</button>
+                    </div>
+                    <button
+                      onClick={() => setPlanningTaskId(isPlanning ? null : t.id)}
+                      style={{ background: isPlanning ? ACCENT : 'transparent', color: isPlanning ? '#fff' : INK, border: `1px solid ${isPlanning ? ACCENT : BORDER}` }}
+                      className="w-full mt-2 text-xs py-1.5 rounded-md"
+                    >{isPlanning ? 'Готово' : 'Планировать дни'}</button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div style={{ background: CARD_BG, border: `1px solid ${BORDER}` }} className="rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold">◆ Разовые дела</h2>
+              <button onClick={() => openEventFormForDate(today)} style={{ border: `1px solid ${BORDER}` }} className="w-7 h-7 rounded-md hover:opacity-70 flex items-center justify-center">+</button>
+            </div>
+            {events.length === 0 && <p style={{ color: MUTED }} className="text-xs">Пока нет разовых дел.</p>}
+            <div className="flex flex-col gap-1.5 max-h-60 overflow-y-auto">
+              {[...events].sort((a,b) => a.date.localeCompare(b.date)).map(e => (
+                <div key={e.id} className="flex items-center justify-between gap-2 text-sm">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span style={{ background: e.color }} className="w-2 h-2 rounded-full inline-block shrink-0" />
+                    <span className="truncate">{e.name}</span>
+                    <span style={{ color: MUTED }} className="text-xs shrink-0">{formatShort(e.date)}</span>
+                  </div>
+                  <button onClick={() => deleteEvent(e.id)} className="shrink-0 hover:opacity-60">✕</button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <p style={{ color: MUTED }} className="text-xs text-center">Данные хранятся локально в этом браузере.</p>
+        </div>
+      </div>
+
+      {showTaskForm && (
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ background: 'rgba(36,31,24,0.45)' }} onClick={() => setShowTaskForm(false)}>
+          <div style={{ background: CARD_BG }} onClick={e => e.stopPropagation()} className="rounded-lg p-5 w-full max-w-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold">Новая задача</h3>
+              <button onClick={() => setShowTaskForm(false)}>✕</button>
+            </div>
+            <label className="text-xs" style={{ color: MUTED }}>Название</label>
+            <input value={taskDraft.name} onChange={e => setTaskDraft({ ...taskDraft, name: e.target.value })} placeholder="Например, пошив партии сумок" style={{ border: `1px solid ${BORDER}` }} className="w-full mt-1 mb-3 px-2.5 py-1.5 rounded-md text-sm outline-none" />
+            <div className="flex gap-2 mb-3">
+              <div className="flex-1">
+                <label className="text-xs" style={{ color: MUTED }}>Начало</label>
+                <input type="date" value={taskDraft.start} onChange={e => setTaskDraft({ ...taskDraft, start: e.target.value })} style={{ border: `1px solid ${BORDER}` }} className="w-full mt-1 px-2 py-1.5 rounded-md text-sm outline-none" />
+              </div>
+              <div className="flex-1">
+                <label className="text-xs" style={{ color: MUTED }}>Дедлайн</label>
+                <input type="date" value={taskDraft.end} onChange={e => setTaskDraft({ ...taskDraft, end: e.target.value })} style={{ border: `1px solid ${BORDER}` }} className="w-full mt-1 px-2 py-1.5 rounded-md text-sm outline-none" />
+              </div>
+            </div>
+            <label className="text-xs" style={{ color: MUTED }}>Цвет</label>
+            <div className="flex flex-wrap gap-2 mt-1 mb-4">
+              {TASK_COLORS.map(c => (
+                <button key={c.hex} title={c.name} onClick={() => setTaskDraft({ ...taskDraft, color: c.hex })} style={{ background: c.hex, boxShadow: taskDraft.color === c.hex ? `0 0 0 2px ${CARD_BG}, 0 0 0 4px ${c.hex}` : 'none' }} className="w-6 h-6 rounded-full" />
+              ))}
+            </div>
+            {taskErr && <p style={{ color: '#A32D2D' }} className="text-xs mb-3">{taskErr}</p>}
+            <button onClick={submitTask} style={{ background: ACCENT, color: '#fff' }} className="w-full py-2 rounded-md text-sm font-medium">Добавить задачу</button>
+          </div>
+        </div>
+      )}
+
+      {showEventForm && (
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ background: 'rgba(36,31,24,0.45)' }} onClick={() => setShowEventForm(false)}>
+          <div style={{ background: CARD_BG }} onClick={e => e.stopPropagation()} className="rounded-lg p-5 w-full max-w-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold">Разовое дело</h3>
+              <button onClick={() => setShowEventForm(false)}>✕</button>
+            </div>
+            <label className="text-xs" style={{ color: MUTED }}>Название</label>
+            <input value={eventDraft.name} onChange={e => setEventDraft({ ...eventDraft, name: e.target.value })} placeholder="Например, встреча с клиентом" style={{ border: `1px solid ${BORDER}` }} className="w-full mt-1 mb-3 px-2.5 py-1.5 rounded-md text-sm outline-none" />
+            <label className="text-xs" style={{ color: MUTED }}>Дата</label>
+            <input type="date" value={eventDraft.date} onChange={e => setEventDraft({ ...eventDraft, date: e.target.value })} style={{ border: `1px solid ${BORDER}` }} className="w-full mt-1 mb-3 px-2 py-1.5 rounded-md text-sm outline-none" />
+            <label className="text-xs" style={{ color: MUTED }}>Цвет</label>
+            <div className="flex flex-wrap gap-2 mt-1 mb-4">
+              {TASK_COLORS.map(c => (
+                <button key={c.hex} title={c.name} onClick={() => setEventDraft({ ...eventDraft, color: c.hex })} style={{ background: c.hex, boxShadow: eventDraft.color === c.hex ? `0 0 0 2px ${CARD_BG}, 0 0 0 4px ${c.hex}` : 'none' }} className="w-6 h-6 rounded-full" />
+              ))}
+            </div>
+            {eventErr && <p style={{ color: '#A32D2D' }} className="text-xs mb-3">{eventErr}</p>}
+            <button onClick={submitEvent} style={{ background: ACCENT, color: '#fff' }} className="w-full py-2 rounded-md text-sm font-medium">Добавить дело</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
