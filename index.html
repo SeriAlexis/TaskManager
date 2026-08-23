@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SutoBags — сумки ручной работы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:  #fffcf2;
+    --mint: #C9EFE3;
+    --mint-deep: #4CAF94;
+    --mint-deep-hover: #3F9982;
+    --ink: #22303A;
+    --ink-soft: #4A5A5F;
+    --badge-dark: #2B2D42;
+    --badge-brown: #8B5E34;
+    --sold-out: #A13B52;
+    --accent-pill-bg: #E4F5EA;
+    --accent-pill-text: #2E7D63;
+    --card-shadow: 0 4px 14px rgba(34,48,58,0.08);
+    --radius-lg: 20px;
+    --radius-md: 14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Nunito', sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+  }
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+
+  /* NAV */
+  .nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 6vw;
+  }
+  .logo{
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:0.5px;
+  }
+  .nav-links{
+    display:flex;
+    gap:28px;
+    font-weight:700;
+    font-size:15px;
+  }
+  .nav-links a{
+    padding:6px 2px;
+    border-bottom:2px solid transparent;
+    transition:border-color .2s ease;
+  }
+  .nav-links a:hover{border-color:var(--mint-deep);}
+
+  /* HERO */
+  .hero{
+    max-height: 100vh;
+    padding:0 0 70px;
+  }
+  .hero-inner{
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:40px;
+    align-items:center;
+    max-width:1400px;
+    max-height: 50%;
+    margin: 0;
+    padding: 30px 50px 6vw; 
+    background:linear-gradient(120deg, #FBF3E1 0%, var(--mint) 100%);
+    border-radius:40px;
+    overflow: visible;
+  }
+  .hero-title{
+    font-family:'Caveat', cursive;
+    font-size:clamp(44px, 6vw, 72px);
+    font-weight:700;
+    line-height:1.05;
+    margin:0 0 18px;
+    color:var(--ink);
+  }
+  .hero-sub{
+    display: flex;
+    font-family:'Caveat', cursive;
+    font-size:clamp(24px, 2.6vw, 32px);
+    color:var(--ink-soft);
+    margin:0;
+    justify-content: right;
+  }
+  .hero-photo-wrap{
+    max-height: 60vh;
+    position:relative;
+    aspect-ratio:1/0.85;
+    border-radius:28px;
+    background:transparent;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:visible;
+  }
+
+  .hero-photo-wrap img{
+  position: absolute;
+  max-width: none;
+  width: 160%;          /* крупнее контейнера */
+  bottom: -190px;         /* сдвиг вниз, чтобы вылезала за нижний край */
+  left: -120px;            /* подровнять по горизонтали, если растёт с обеих сторон */
+  transform: rotate(-18deg);
+  filter: drop-shadow(15px 8px 18px rgba(0,0,0,0.25));
+  
+}
+
+  /* SECTIONS */
+  section.catalog{
+    padding:64px 6vw;
+  }
+  .catalog.in-stock{
+    background:var(--mint);
+    position: relative;
+  }
+  .catalog.on-order{background:var(--cream);}
+  .catalog-inner{max-width:1200px;margin:0 auto;}
+  .section-heading-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+    margin-bottom:32px;
+  }
+  h2.section-title{
+    font-size:28px;
+    font-weight:800;
+    margin:0;
+  }
+  .pill{
+    background:var(--accent-pill-bg);
+    color:var(--accent-pill-text);
+    font-weight:700;
+    font-size:14px;
+    padding:10px 20px;
+    border-radius:999px;
+    display:inline-block;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:24px;
+  }
+
+  .card{
+    display:flex;
+    flex-direction:column;
+  }
+  .card-photo{
+    position:relative;
+    aspect-ratio:1/1;
+    border-radius:var(--radius-lg);
+    overflow:hidden;
+    box-shadow:var(--card-shadow);
+    background:#EFE6D8;
+  }
+  .card-photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+  }
+  .card-photo.sold-out img{filter:grayscale(35%) brightness(0.75);}
+  .badge-number{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:var(--mint-deep);
+    color:#fff;
+    font-weight:800;
+    font-size:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .on-order .badge-number{background:var(--badge-brown);}
+  .badge-price{
+    position:absolute;
+    left:16px;
+    bottom:14px;
+    background:var(--badge-dark);
+    color:#fff;
+    font-weight:800;
+    font-size:20px;
+    padding:8px 22px;
+    border-radius:999px;
+  }
+  .badge-price.sold-out{
+    background:var(--sold-out);
+    font-size:16px;
+    padding:8px 20px;
+  }
+  .card-title{
+    font-size:17px;
+    font-weight:800;
+    margin:16px 0 8px;
+    text-align:center;
+  }
+  .card-desc{
+    list-style:none;
+    margin:0 0 18px;
+    padding:0;
+    font-size:14px;
+    color:var(--ink-soft);
+    text-align:center;
+    line-height:1.55;
+  }
+  .card-desc li{margin-bottom:2px;}
+  .card-desc li::before{content:"• ";}
+
+  .btn-order{
+    margin-top:auto;
+    background:var(--mint-deep);
+    color:#fff;
+    border:none;
+    font-family:'Nunito', sans-serif;
+    font-weight:800;
+    font-size:15px;
+    padding:12px 0;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .2s ease, transform .1s ease;
+  }
+  .btn-order:hover{background:var(--mint-deep-hover);}
+  .btn-order:active{transform:scale(0.98);}
+  .btn-order:disabled{
+    background:#B9BAC7;
+    cursor:not-allowed;
+  }
+
+  .all-colors-note{
+    text-align:center;
+    margin:36px 0 0;
+  }
+
+  /* DELIVERY */
+  .delivery{
+    background:var(--mint-deep);
+    color:#fff;
+    border-radius:var(--radius-lg);
+    padding:20px 45px;
+    margin: 20px;
+  }
+  .delivery ul{margin:0;padding-left:20px;font-weight:700;font-size:16px;line-height:1.9;}
+
+  /* CONTACT */
+  .contact{
+    background:var(--mint);
+    padding:56px 6vw 60px;
+    margin-top:48px;
+    border-radius:40px 40px 0 0;
+  }
+  .contact-inner{max-width:700px;margin:0 auto;}
+  .selected-box{
+    border-radius:var(--radius-md);
+    font-weight:700;
+    margin-bottom:22px;
+    min-height:24px;
+  }
+  .selected-box .placeholder-text{font-weight:600;}
+  .contact label{
+    display:block;
+    font-weight:800;
+    margin-bottom:12px;
+    font-size:16px;
+  }
+  .contact-form{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:32px;
+  }
+  .contact-form input{
+    flex:1 1 260px;
+    padding:14px 18px;
+    border-radius:999px;
+    border:none;
+    font-family:'Nunito', sans-serif;
+    font-size:15px;
+  }
+  .contact-form button{
+    background:var(--mint-deep);
+    color:#fff;
+    border:none;
+    font-family:'Nunito', sans-serif;
+    font-weight:800;
+    font-size:15px;
+    padding:14px 28px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .2s ease;
+  }
+  .contact-form button:hover{background:var(--mint-deep-hover);}
+  .messengers-label{font-weight:700;margin:0 0 16px;}
+  .messenger-icons{display:flex;gap:16px;}
+  .messenger-icons a{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .15s ease;
+  }
+  .messenger-icons a:hover{transform:translateY(-3px);}
+
+  @media (max-width:820px){
+    .hero-inner{grid-template-columns:1fr;}
+    .hero-photo-wrap{order:-1;aspect-ratio:16/10;}
+    .hero-photo-wrap img{
+    position: static;      /* убираем абсолютное позиционирование */
+    width: 100%;            /* обычная ширина в рамках контейнера */
+    max-width: 100%;        /* возвращаем стандартное поведение */
+    bottom: auto;
+    left: auto;
+  }
+    .nav{flex-direction:column;gap:14px;text-align:center;}
+    .nav-links{gap:18px;font-size:14px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo">SutoBags</div>
+  <div class="nav-links">
+    <a href="#in-stock">В наличии</a>
+    <a href="#on-order">На заказ</a>
+    <a href="#contact">Контакты</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1 class="hero-title">Сумки ручной работы</h1>
+      <p class="hero-sub">С побережья Черногории ♡</p>
+    </div>
+    <div class="hero-photo-wrap">
+      <img src="images/bag-hero.png" alt="Сумка № 1, сиренево-голубая, прямоугольная">
+    </div>
+  </div>
+</header>
+
+<section class="catalog in-stock" id="in-stock">
+  <div class="catalog-inner">
+    <div class="section-heading-row">
+      <h2 class="section-title">В наличии:</h2>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-photo">
+          <span class="badge-number">1</span>
+          <img src="images/bag-1-lavender.png" alt="Сумка № 1, сиренево-голубая, прямоугольная">
+          <span class="badge-price">30$</span>
+        </div>
+        <h3 class="card-title">20×10</h3>
+        <ul class="card-desc">
+          <li>Прямоугольная форма</li>
+          <li>Пряжа с высоким содержанием хлопка</li>
+          <li>Лавандовый и голубой цвета</li>
+        </ul>
+        <button class="btn-order" onclick="selectItem('Модель № 1 — 30$')">Заказать</button>
+      </div>
+
+      <div class="card">
+        <div class="card-photo">
+          <span class="badge-number">2</span>
+          <img src="images/bag-2-square.png" alt="Сумка № 2, квадратная, голубая с сиреневым узором">
+          <span class="badge-price">35$</span>
+        </div>
+        <h3 class="card-title">20×25</h3>
+        <ul class="card-desc">
+          <li>Квадратная форма</li>
+          <li>Пряжа с высоким содержанием хлопка</li>
+          <li>Лавандовый и голубой цвета</li>
+        </ul>
+        <button class="btn-order" onclick="selectItem('Модель № 2 — 35$')">Заказать</button>
+      </div>
+
+      <div class="card">
+        <div class="card-photo">
+          <span class="badge-number">3</span>
+          <img src="images/bag-3-round.png" alt="Сумка № 3, округлая, синяя">
+          <span class="badge-price">30$</span>
+        </div>
+        <h3 class="card-title">20×20</h3>
+        <ul class="card-desc">
+          <li>Округлая форма</li>
+          <li>Пряжа с высоким содержанием хлопка</li>
+          <li>Синий цвет</li>
+        </ul>
+        <button class="btn-order" onclick="selectItem('Модель № 3 — 30$')">Заказать</button>
+      </div>
+
+      <div class="card">
+        <div class="card-photo sold-out">
+          <span class="badge-number">4</span>
+          <img src="images/bag-4-neon.png" alt="Сумка № 4, черно-зеленая, продана">
+          <span class="badge-price sold-out">Sold Out</span>
+        </div>
+        <h3 class="card-title">20×10</h3>
+        <ul class="card-desc">
+          <li>Прямоугольная форма</li>
+          <li>Полиэфирный шнур</li>
+          <li>Черный и зеленый цвета</li>
+        </ul>
+        <button class="btn-order" disabled>Продано</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="catalog on-order" id="on-order">
+  <div class="catalog-inner">
+    <div class="section-heading-row">
+      <h2 class="section-title">На заказ:</h2>
+      <span class="pill">Все модели на заказ доступны в любых расцветках</span>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-photo">
+          <span class="badge-number">1</span>
+          <img src="images/bag-1-lavender.png" alt="Сумка № 1 на заказ">
+          <span class="badge-price">35$</span>
+        </div>
+        <h3 class="card-title">20×10</h3>
+        <ul class="card-desc">
+          <li>Прямоугольная форма</li>
+          <li>Пряжа с высоким содержанием хлопка</li>
+        </ul>
+        <button class="btn-order" onclick="selectItem('Модель № 1 на заказ — 35$')">Заказать</button>
+      </div>
+
+      <div class="card">
+        <div class="card-photo">
+          <span class="badge-number">2</span>
+          <img src="images/bag-2-square.png" alt="Сумка № 2 на заказ">
+          <span class="badge-price">40$</span>
+        </div>
+        <h3 class="card-title">20×25</h3>
+        <ul class="card-desc">
+          <li>Квадратная форма</li>
+          <li>Пряжа с высоким содержанием хлопка</li>
+        </ul>
+        <button class="btn-order" onclick="selectItem('Модель № 2 на заказ — 40$')">Заказать</button>
+      </div>
+
+      <div class="card">
+        <div class="card-photo">
+          <span class="badge-number">3</span>
+          <img src="images/bag-3-round.png" alt="Сумка № 3 на заказ">
+          <span class="badge-price">35$</span>
+        </div>
+        <h3 class="card-title">20×20</h3>
+        <ul class="card-desc">
+          <li>Округлая форма</li>
+          <li>Пряжа с высоким содержанием хлопка</li>
+        </ul>
+        <button class="btn-order" onclick="selectItem('Модель № 3 на заказ — 35$')">Заказать</button>
+      </div>
+
+      <div class="card">
+        <div class="card-photo">
+          <span class="badge-number">4</span>
+          <img src="images/bag-4-neon.png" alt="Сумка № 4 на заказ">
+          <span class="badge-price">40$</span>
+        </div>
+        <h3 class="card-title">20×10</h3>
+        <ul class="card-desc">
+          <li>Прямоугольная форма</li>
+          <li>Полиэфирный шнур</li>
+        </ul>
+        <button class="btn-order" onclick="selectItem('Модель № 4 на заказ — 40$')">Заказать</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="delivery" style="margin-top:48px;">
+      <ul>
+        <li>Доставка по Бару и Подгорице — бесплатно</li>
+        <li>Доставка в другие города по договоренности</li>
+        <li>Самовывоз из Сутоморе</li>
+      </ul>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="selected-box" id="selectedBox">
+      <span class="placeholder-text">Вы ещё не выбрали сумку — нажмите «Заказать» у понравившейся модели</span>
+    </div>
+
+    <label for="emailInput">Для заказа оставьте свой e-mail или номер телефона:</label>
+    <form class="contact-form" action="https://formspree.io/f/xrpzvyok" method="POST" alert('Спасибо! Свяжусь с вами в ближайшее время.');">
+      <input type="hidden" name="Выбранная модель" id="selectedModelField" value="Не выбрана">
+      <input type="text" name="contact" id="emailInput" placeholder="Ваш e-mail или телефон" required>
+      <button type="submit">Свяжитесь со мной</button>
+    </form>
+
+    <p class="messengers-label">Или напишите мне в любом из мессенджеров:</p>
+    <div class="messenger-icons">
+      <a href="https://t.me/JellyNelly" aria-label="Telegram" target="_blank" rel="noopener">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7Z"/></svg>
+      </a>
+      <!--<a href="https://instagram.com/" aria-label="Instagram" target="_blank" rel="noopener">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+      </a>-->
+      <a href="https://wa.me/" aria-label="WhatsApp" target="_blank" rel="noopener">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      </a>
+      <a href="https://facebook.com/profile.php?id=100009431122313" aria-label="Facebook" target="_blank" rel="noopener">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  function selectItem(label){
+  document.getElementById('selectedBox').innerHTML = 'Вы выбрали: ' + label;
+  document.getElementById('selectedModelField').value = label;
+  document.getElementById('contact').scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+
+</body>
+</html>
