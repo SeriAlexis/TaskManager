@@ -1,4 +1,3 @@
-import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
 const {
   useState,
   useEffect,
@@ -406,635 +405,548 @@ function App() {
   }
   const planningTask = tasks.find(t => t.id === planningTaskId);
   const statusLabel = syncStatus === 'syncing' ? 'Синхронизация…' : syncStatus === 'offline' ? 'Нет сети — сохранено на устройстве' : syncStatus === 'error' ? 'Ошибка синхронизации' : 'Всё синхронизировано';
-  return /*#__PURE__*/_jsxDEV("div", {
+  return /*#__PURE__*/React.createElement("div", {
     style: {
       background: PAGE_BG,
       color: INK,
       minHeight: '100vh',
       fontFamily: 'ui-sans-serif, system-ui, sans-serif'
     },
-    className: "p-4 sm:p-8",
-    children: [/*#__PURE__*/_jsxDEV("div", {
-      className: "max-w-6xl mx-auto flex flex-col lg:flex-row gap-6",
-      children: [/*#__PURE__*/_jsxDEV("div", {
-        className: "flex-1 min-w-0",
-        children: /*#__PURE__*/_jsxDEV("div", {
-          style: {
-            background: CARD_BG,
-            border: `1px solid ${BORDER}`
-          },
-          className: "rounded-lg p-3 sm:p-6",
-          children: [/*#__PURE__*/_jsxDEV("div", {
-            className: "flex items-center justify-between mb-5",
-            children: [/*#__PURE__*/_jsxDEV("button", {
-              onClick: () => changeMonth(-1),
-              style: {
-                border: `1px solid ${BORDER}`
-              },
-              className: "px-3 py-1.5 rounded-md hover:opacity-70 transition text-lg",
-              children: "‹"
-            }, void 0, false), /*#__PURE__*/_jsxDEV("h1", {
-              style: {
-                fontFamily: 'Georgia, serif'
-              },
-              className: "text-xl sm:text-2xl font-semibold tracking-wide",
-              children: [MONTHS[view.m], " ", view.y]
-            }, void 0, true), /*#__PURE__*/_jsxDEV("button", {
-              onClick: () => changeMonth(1),
-              style: {
-                border: `1px solid ${BORDER}`
-              },
-              className: "px-3 py-1.5 rounded-md hover:opacity-70 transition text-lg",
-              children: "›"
-            }, void 0, false)]
-          }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
-            className: "grid grid-cols-7 gap-1 mb-1",
-            children: WEEKDAYS.map(w => /*#__PURE__*/_jsxDEV("div", {
-              style: {
-                color: MUTED
-              },
-              className: "text-center text-xs font-medium py-1",
-              children: w
-            }, w, false))
-          }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-            className: "grid grid-cols-7 gap-1",
-            children: grid.map((d, i) => {
-              if (d === null) return /*#__PURE__*/_jsxDEV("div", {
-                className: "h-20 sm:h-24 rounded-md",
-                style: {
-                  background: 'transparent'
-                }
-              }, i, false);
-              const dateKey = toKey(view.y, view.m, d);
-              const tasksInRange = tasks.filter(t => dateKey >= t.start && dateKey <= t.end);
-              const plannedToday = tasksInRange.filter(t => t.plannedDays.includes(dateKey));
-              const eventsToday = events.filter(e => e.date === dateKey);
-              const isToday = dateKey === today;
-              const isPlannableHere = planningTask && dateKey >= planningTask.start && dateKey <= planningTask.end;
-              const ringShadows = tasksInRange.slice(0, 3).map((t, idx) => `inset 0 0 0 ${3 + idx * 4}px ${t.color}`);
-              let background = 'transparent';
-              if (plannedToday.length === 1) {
-                background = plannedToday[0].color;
-              } else if (plannedToday.length > 1) {
-                const n = plannedToday.length;
-                const stops = plannedToday.map((t, idx) => `${t.color} ${(idx * 100 / n).toFixed(1)}%, ${t.color} ${((idx + 1) * 100 / n).toFixed(1)}%`).join(', ');
-                background = `linear-gradient(135deg, ${stops})`;
-              }
-              const filled = plannedToday.length > 0;
-              return /*#__PURE__*/_jsxDEV("div", {
-                onClick: () => handleCellClick(dateKey),
-                style: {
-                  background,
-                  boxShadow: ringShadows.length ? ringShadows.join(', ') : isToday ? `inset 0 0 0 2px ${ACCENT}` : `inset 0 0 0 1px ${BORDER}`,
-                  cursor: planningTask ? isPlannableHere ? 'pointer' : 'default' : 'pointer',
-                  opacity: planningTask && !isPlannableHere ? 0.45 : 1
-                },
-                className: "h-20 sm:h-24 rounded-md p-1.5 flex flex-col justify-between overflow-hidden relative",
-                children: [/*#__PURE__*/_jsxDEV("span", {
-                  style: {
-                    color: filled ? '#fff' : isToday ? ACCENT : INK,
-                    fontWeight: isToday ? 700 : 500
-                  },
-                  className: "text-xs sm:text-sm leading-none",
-                  children: d
-                }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-                  className: "flex flex-col gap-0.5 mt-auto",
-                  children: [eventsToday.slice(0, 2).map(e => /*#__PURE__*/_jsxDEV("span", {
-                    title: e.name,
-                    style: {
-                      background: e.color,
-                      color: '#fff'
-                    },
-                    className: "text-[10px] leading-tight rounded px-1 py-0.5 truncate",
-                    children: e.name
-                  }, e.id, false)), eventsToday.length > 2 && /*#__PURE__*/_jsxDEV("span", {
-                    style: {
-                      color: filled ? '#fff' : MUTED
-                    },
-                    className: "text-[10px]",
-                    children: ["+", eventsToday.length - 2]
-                  }, void 0, true)]
-                }, void 0, true)]
-              }, i, true);
-            })
-          }, void 0, false), planningTask && /*#__PURE__*/_jsxDEV("div", {
-            style: {
-              background: '#F1EEE2',
-              border: `1px solid ${BORDER}`
-            },
-            className: "mt-4 rounded-md p-3 flex items-center justify-between gap-3 flex-wrap",
-            children: [/*#__PURE__*/_jsxDEV("div", {
-              className: "flex items-center gap-2 text-sm",
-              children: [/*#__PURE__*/_jsxDEV("span", {
-                style: {
-                  background: planningTask.color
-                },
-                className: "w-2.5 h-2.5 rounded-full inline-block"
-              }, void 0, false), /*#__PURE__*/_jsxDEV("span", {
-                children: ["Режим планирования: ", /*#__PURE__*/_jsxDEV("b", {
-                  children: planningTask.name
-                }, void 0, false), ". Кликайте по дням внутри рамки, чтобы отметить их полной заливкой."]
-              }, void 0, true)]
-            }, void 0, true), /*#__PURE__*/_jsxDEV("button", {
-              onClick: () => setPlanningTaskId(null),
-              style: {
-                background: ACCENT,
-                color: '#fff'
-              },
-              className: "text-sm px-3 py-1.5 rounded-md shrink-0",
-              children: "✓ Готово"
-            }, void 0, false)]
-          }, void 0, true), !planningTask && /*#__PURE__*/_jsxDEV("p", {
-            style: {
-              color: MUTED
-            },
-            className: "text-xs mt-4",
-            children: "Клик по дню создаёт разовое дело на эту дату. Чтобы распланировать дни задачи — нажмите «Планировать» у нужной задачи."
-          }, void 0, false)]
-        }, void 0, true)
-      }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-        className: "w-full lg:w-80 shrink-0 flex flex-col gap-4",
-        children: [/*#__PURE__*/_jsxDEV("div", {
-          style: {
-            background: CARD_BG,
-            border: `1px solid ${BORDER}`
-          },
-          className: "rounded-lg p-4",
-          children: [/*#__PURE__*/_jsxDEV("div", {
-            className: "flex items-center justify-between mb-3",
-            children: [/*#__PURE__*/_jsxDEV("h2", {
-              className: "text-sm font-semibold",
-              children: "▤ Задачи"
-            }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
-              onClick: () => {
-                setTaskDraft({
-                  name: '',
-                  start: today,
-                  end: today,
-                  color: TASK_COLORS[tasks.length % TASK_COLORS.length].hex
-                });
-                setTaskErr('');
-                setShowTaskForm(true);
-              },
-              style: {
-                border: `1px solid ${BORDER}`
-              },
-              className: "w-8 h-8 rounded-md hover:opacity-70 flex items-center justify-center",
-              children: "+"
-            }, void 0, false)]
-          }, void 0, true), tasks.length === 0 && /*#__PURE__*/_jsxDEV("p", {
-            style: {
-              color: MUTED
-            },
-            className: "text-xs",
-            children: "Пока нет ни одной задачи."
-          }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-            className: "flex flex-col gap-2",
-            children: tasks.map(t => {
-              const total = countDaysBetween(t.start, t.end);
-              const planned = t.plannedDays.length;
-              const isPlanning = planningTaskId === t.id;
-              return /*#__PURE__*/_jsxDEV("div", {
-                style: {
-                  border: `1px solid ${BORDER}`,
-                  background: isPlanning ? '#F1EEE2' : 'transparent'
-                },
-                className: "rounded-md p-2.5",
-                children: [/*#__PURE__*/_jsxDEV("div", {
-                  className: "flex items-start justify-between gap-2",
-                  children: [/*#__PURE__*/_jsxDEV("div", {
-                    className: "flex items-start gap-2 min-w-0",
-                    children: [/*#__PURE__*/_jsxDEV("span", {
-                      style: {
-                        background: t.color
-                      },
-                      className: "w-2.5 h-2.5 rounded-full inline-block mt-1 shrink-0"
-                    }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-                      className: "min-w-0",
-                      children: [/*#__PURE__*/_jsxDEV("p", {
-                        className: "text-sm font-medium truncate",
-                        children: t.name
-                      }, void 0, false), /*#__PURE__*/_jsxDEV("p", {
-                        style: {
-                          color: MUTED
-                        },
-                        className: "text-xs",
-                        children: [formatShort(t.start), " – ", formatShort(t.end)]
-                      }, void 0, true), /*#__PURE__*/_jsxDEV("p", {
-                        style: {
-                          color: MUTED
-                        },
-                        className: "text-xs",
-                        children: [planned, " / ", total, " дн. запланировано"]
-                      }, void 0, true)]
-                    }, void 0, true)]
-                  }, void 0, true), /*#__PURE__*/_jsxDEV("button", {
-                    onClick: () => deleteTask(t.id),
-                    className: "shrink-0 p-1 hover:opacity-60",
-                    "aria-label": "Удалить задачу",
-                    children: "✕"
-                  }, void 0, false)]
-                }, void 0, true), /*#__PURE__*/_jsxDEV("button", {
-                  onClick: () => setPlanningTaskId(isPlanning ? null : t.id),
-                  style: {
-                    background: isPlanning ? ACCENT : 'transparent',
-                    color: isPlanning ? '#fff' : INK,
-                    border: `1px solid ${isPlanning ? ACCENT : BORDER}`
-                  },
-                  className: "w-full mt-2 text-xs py-2 rounded-md",
-                  children: isPlanning ? 'Готово' : 'Планировать дни'
-                }, void 0, false)]
-              }, t.id, true);
-            })
-          }, void 0, false)]
-        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
-          style: {
-            background: CARD_BG,
-            border: `1px solid ${BORDER}`
-          },
-          className: "rounded-lg p-4",
-          children: [/*#__PURE__*/_jsxDEV("div", {
-            className: "flex items-center justify-between mb-3",
-            children: [/*#__PURE__*/_jsxDEV("h2", {
-              className: "text-sm font-semibold",
-              children: "◆ Разовые дела"
-            }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
-              onClick: () => openEventFormForDate(today),
-              style: {
-                border: `1px solid ${BORDER}`
-              },
-              className: "w-8 h-8 rounded-md hover:opacity-70 flex items-center justify-center",
-              children: "+"
-            }, void 0, false)]
-          }, void 0, true), events.length === 0 && /*#__PURE__*/_jsxDEV("p", {
-            style: {
-              color: MUTED
-            },
-            className: "text-xs",
-            children: "Пока нет разовых дел."
-          }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-            className: "flex flex-col gap-1.5 max-h-60 overflow-y-auto",
-            children: [...events].sort((a, b) => a.date.localeCompare(b.date)).map(e => /*#__PURE__*/_jsxDEV("div", {
-              className: "flex items-center justify-between gap-2 text-sm",
-              children: [/*#__PURE__*/_jsxDEV("div", {
-                className: "flex items-center gap-2 min-w-0",
-                children: [/*#__PURE__*/_jsxDEV("span", {
-                  style: {
-                    background: e.color
-                  },
-                  className: "w-2 h-2 rounded-full inline-block shrink-0"
-                }, void 0, false), /*#__PURE__*/_jsxDEV("span", {
-                  className: "truncate",
-                  children: e.name
-                }, void 0, false), /*#__PURE__*/_jsxDEV("span", {
-                  style: {
-                    color: MUTED
-                  },
-                  className: "text-xs shrink-0",
-                  children: formatShort(e.date)
-                }, void 0, false)]
-              }, void 0, true), /*#__PURE__*/_jsxDEV("button", {
-                onClick: () => deleteEvent(e.id),
-                className: "shrink-0 p-1 hover:opacity-60",
-                "aria-label": "Удалить дело",
-                children: "✕"
-              }, void 0, false)]
-            }, e.id, true))
-          }, void 0, false)]
-        }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
-          style: {
-            background: CARD_BG,
-            border: `1px solid ${BORDER}`
-          },
-          className: "rounded-lg p-4",
-          children: [/*#__PURE__*/_jsxDEV("h2", {
-            className: "text-sm font-semibold mb-3",
-            children: "☁ Синхронизация"
-          }, void 0, false), !sb && /*#__PURE__*/_jsxDEV("p", {
-            style: {
-              color: MUTED
-            },
-            className: "text-xs",
-            children: "Не настроена: впишите данные Supabase в файл config.js. Пока данные хранятся только на этом устройстве."
-          }, void 0, false), sb && !authReady && /*#__PURE__*/_jsxDEV("p", {
-            style: {
-              color: MUTED
-            },
-            className: "text-xs",
-            children: "Загрузка…"
-          }, void 0, false), sb && authReady && !user && /*#__PURE__*/_jsxDEV("form", {
-            onSubmit: e => {
-              e.preventDefault();
-              signIn();
-            },
-            children: [/*#__PURE__*/_jsxDEV("input", {
-              type: "email",
-              autoComplete: "email",
-              value: authDraft.email,
-              onChange: e => setAuthDraft({
-                ...authDraft,
-                email: e.target.value
-              }),
-              placeholder: "Почта",
-              style: {
-                border: `1px solid ${BORDER}`
-              },
-              className: "w-full mb-2 px-2.5 py-2 rounded-md text-sm outline-none bg-transparent"
-            }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
-              type: "password",
-              autoComplete: "current-password",
-              value: authDraft.password,
-              onChange: e => setAuthDraft({
-                ...authDraft,
-                password: e.target.value
-              }),
-              placeholder: "Пароль",
-              style: {
-                border: `1px solid ${BORDER}`
-              },
-              className: "w-full mb-3 px-2.5 py-2 rounded-md text-sm outline-none bg-transparent"
-            }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-              className: "flex gap-2",
-              children: [/*#__PURE__*/_jsxDEV("button", {
-                type: "submit",
-                disabled: authBusy,
-                style: {
-                  background: ACCENT,
-                  color: '#fff'
-                },
-                className: "flex-1 py-2 rounded-md text-sm font-medium",
-                children: "Войти"
-              }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
-                type: "button",
-                disabled: authBusy,
-                onClick: signUp,
-                style: {
-                  border: `1px solid ${BORDER}`
-                },
-                className: "flex-1 py-2 rounded-md text-sm",
-                children: "Создать"
-              }, void 0, false)]
-            }, void 0, true), syncMsg && /*#__PURE__*/_jsxDEV("p", {
-              style: {
-                color: '#A32D2D'
-              },
-              className: "text-xs mt-3",
-              children: syncMsg
-            }, void 0, false)]
-          }, void 0, true), sb && authReady && user && /*#__PURE__*/_jsxDEV("div", {
-            children: [/*#__PURE__*/_jsxDEV("p", {
-              className: "text-sm truncate",
-              children: user.email
-            }, void 0, false), /*#__PURE__*/_jsxDEV("p", {
-              style: {
-                color: syncStatus === 'error' ? '#A32D2D' : MUTED
-              },
-              className: "text-xs mt-1",
-              children: statusLabel
-            }, void 0, false), syncStatus === 'error' && syncMsg && /*#__PURE__*/_jsxDEV("p", {
-              style: {
-                color: '#A32D2D'
-              },
-              className: "text-xs mt-1 break-words",
-              children: syncMsg
-            }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-              className: "flex gap-2 mt-3",
-              children: [/*#__PURE__*/_jsxDEV("button", {
-                onClick: () => pull(),
-                style: {
-                  border: `1px solid ${BORDER}`
-                },
-                className: "flex-1 py-2 rounded-md text-xs",
-                children: "Обновить"
-              }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
-                onClick: signOut,
-                style: {
-                  border: `1px solid ${BORDER}`
-                },
-                className: "flex-1 py-2 rounded-md text-xs",
-                children: "Выйти"
-              }, void 0, false)]
-            }, void 0, true)]
-          }, void 0, true)]
-        }, void 0, true), /*#__PURE__*/_jsxDEV("p", {
-          style: {
-            color: MUTED
-          },
-          className: "text-xs text-center",
-          children: user ? 'Данные хранятся на устройстве и в облаке.' : 'Данные хранятся локально на этом устройстве.'
-        }, void 0, false)]
-      }, void 0, true)]
-    }, void 0, true), showTaskForm && /*#__PURE__*/_jsxDEV("div", {
-      className: "fixed inset-0 flex items-center justify-center p-4 z-50",
+    className: "p-4 sm:p-8"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "max-w-6xl mx-auto flex flex-col lg:flex-row gap-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex-1 min-w-0"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: CARD_BG,
+      border: `1px solid ${BORDER}`
+    },
+    className: "rounded-lg p-3 sm:p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between mb-5"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => changeMonth(-1),
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "px-3 py-1.5 rounded-md hover:opacity-70 transition text-lg"
+  }, "‹"), /*#__PURE__*/React.createElement("h1", {
+    style: {
+      fontFamily: 'Georgia, serif'
+    },
+    className: "text-xl sm:text-2xl font-semibold tracking-wide"
+  }, MONTHS[view.m], " ", view.y), /*#__PURE__*/React.createElement("button", {
+    onClick: () => changeMonth(1),
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "px-3 py-1.5 rounded-md hover:opacity-70 transition text-lg"
+  }, "›")), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-7 gap-1 mb-1"
+  }, WEEKDAYS.map(w => /*#__PURE__*/React.createElement("div", {
+    key: w,
+    style: {
+      color: MUTED
+    },
+    className: "text-center text-xs font-medium py-1"
+  }, w))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-7 gap-1"
+  }, grid.map((d, i) => {
+    if (d === null) return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      className: "h-20 sm:h-24 rounded-md",
       style: {
-        background: 'rgba(36,31,24,0.45)'
-      },
-      onClick: () => setShowTaskForm(false),
-      children: /*#__PURE__*/_jsxDEV("div", {
-        style: {
-          background: CARD_BG
-        },
-        onClick: e => e.stopPropagation(),
-        className: "rounded-lg p-5 w-full max-w-sm",
-        children: [/*#__PURE__*/_jsxDEV("div", {
-          className: "flex items-center justify-between mb-4",
-          children: [/*#__PURE__*/_jsxDEV("h3", {
-            className: "font-semibold",
-            children: "Новая задача"
-          }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
-            onClick: () => setShowTaskForm(false),
-            className: "p-1",
-            children: "✕"
-          }, void 0, false)]
-        }, void 0, true), /*#__PURE__*/_jsxDEV("label", {
-          className: "text-xs",
-          style: {
-            color: MUTED
-          },
-          children: "Название"
-        }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
-          value: taskDraft.name,
-          onChange: e => setTaskDraft({
-            ...taskDraft,
-            name: e.target.value
-          }),
-          placeholder: "Например, пошив партии сумок",
-          style: {
-            border: `1px solid ${BORDER}`
-          },
-          className: "w-full mt-1 mb-3 px-2.5 py-2 rounded-md text-sm outline-none bg-transparent"
-        }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-          className: "flex gap-2 mb-3",
-          children: [/*#__PURE__*/_jsxDEV("div", {
-            className: "flex-1 min-w-0",
-            children: [/*#__PURE__*/_jsxDEV("label", {
-              className: "text-xs",
-              style: {
-                color: MUTED
-              },
-              children: "Начало"
-            }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
-              type: "date",
-              value: taskDraft.start,
-              onChange: e => setTaskDraft({
-                ...taskDraft,
-                start: e.target.value
-              }),
-              style: {
-                border: `1px solid ${BORDER}`
-              },
-              className: "w-full mt-1 px-2 py-2 rounded-md text-sm outline-none bg-transparent"
-            }, void 0, false)]
-          }, void 0, true), /*#__PURE__*/_jsxDEV("div", {
-            className: "flex-1 min-w-0",
-            children: [/*#__PURE__*/_jsxDEV("label", {
-              className: "text-xs",
-              style: {
-                color: MUTED
-              },
-              children: "Дедлайн"
-            }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
-              type: "date",
-              value: taskDraft.end,
-              onChange: e => setTaskDraft({
-                ...taskDraft,
-                end: e.target.value
-              }),
-              style: {
-                border: `1px solid ${BORDER}`
-              },
-              className: "w-full mt-1 px-2 py-2 rounded-md text-sm outline-none bg-transparent"
-            }, void 0, false)]
-          }, void 0, true)]
-        }, void 0, true), /*#__PURE__*/_jsxDEV("label", {
-          className: "text-xs",
-          style: {
-            color: MUTED
-          },
-          children: "Цвет"
-        }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-          className: "flex flex-wrap gap-2 mt-1 mb-4",
-          children: TASK_COLORS.map(c => /*#__PURE__*/_jsxDEV("button", {
-            title: c.name,
-            onClick: () => setTaskDraft({
-              ...taskDraft,
-              color: c.hex
-            }),
-            style: {
-              background: c.hex,
-              boxShadow: taskDraft.color === c.hex ? `0 0 0 2px ${CARD_BG}, 0 0 0 4px ${c.hex}` : 'none'
-            },
-            className: "w-7 h-7 rounded-full"
-          }, c.hex, false))
-        }, void 0, false), taskErr && /*#__PURE__*/_jsxDEV("p", {
-          style: {
-            color: '#A32D2D'
-          },
-          className: "text-xs mb-3",
-          children: taskErr
-        }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
-          onClick: submitTask,
-          style: {
-            background: ACCENT,
-            color: '#fff'
-          },
-          className: "w-full py-2.5 rounded-md text-sm font-medium",
-          children: "Добавить задачу"
-        }, void 0, false)]
-      }, void 0, true)
-    }, void 0, false), showEventForm && /*#__PURE__*/_jsxDEV("div", {
-      className: "fixed inset-0 flex items-center justify-center p-4 z-50",
+        background: 'transparent'
+      }
+    });
+    const dateKey = toKey(view.y, view.m, d);
+    const tasksInRange = tasks.filter(t => dateKey >= t.start && dateKey <= t.end);
+    const plannedToday = tasksInRange.filter(t => t.plannedDays.includes(dateKey));
+    const eventsToday = events.filter(e => e.date === dateKey);
+    const isToday = dateKey === today;
+    const isPlannableHere = planningTask && dateKey >= planningTask.start && dateKey <= planningTask.end;
+    const ringShadows = tasksInRange.slice(0, 3).map((t, idx) => `inset 0 0 0 ${3 + idx * 4}px ${t.color}`);
+    let background = 'transparent';
+    if (plannedToday.length === 1) {
+      background = plannedToday[0].color;
+    } else if (plannedToday.length > 1) {
+      const n = plannedToday.length;
+      const stops = plannedToday.map((t, idx) => `${t.color} ${(idx * 100 / n).toFixed(1)}%, ${t.color} ${((idx + 1) * 100 / n).toFixed(1)}%`).join(', ');
+      background = `linear-gradient(135deg, ${stops})`;
+    }
+    const filled = plannedToday.length > 0;
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      onClick: () => handleCellClick(dateKey),
       style: {
-        background: 'rgba(36,31,24,0.45)'
+        background,
+        boxShadow: ringShadows.length ? ringShadows.join(', ') : isToday ? `inset 0 0 0 2px ${ACCENT}` : `inset 0 0 0 1px ${BORDER}`,
+        cursor: planningTask ? isPlannableHere ? 'pointer' : 'default' : 'pointer',
+        opacity: planningTask && !isPlannableHere ? 0.45 : 1
       },
-      onClick: () => setShowEventForm(false),
-      children: /*#__PURE__*/_jsxDEV("div", {
-        style: {
-          background: CARD_BG
-        },
-        onClick: e => e.stopPropagation(),
-        className: "rounded-lg p-5 w-full max-w-sm",
-        children: [/*#__PURE__*/_jsxDEV("div", {
-          className: "flex items-center justify-between mb-4",
-          children: [/*#__PURE__*/_jsxDEV("h3", {
-            className: "font-semibold",
-            children: "Разовое дело"
-          }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
-            onClick: () => setShowEventForm(false),
-            className: "p-1",
-            children: "✕"
-          }, void 0, false)]
-        }, void 0, true), /*#__PURE__*/_jsxDEV("label", {
-          className: "text-xs",
-          style: {
-            color: MUTED
-          },
-          children: "Название"
-        }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
-          value: eventDraft.name,
-          onChange: e => setEventDraft({
-            ...eventDraft,
-            name: e.target.value
-          }),
-          placeholder: "Например, встреча с клиентом",
-          style: {
-            border: `1px solid ${BORDER}`
-          },
-          className: "w-full mt-1 mb-3 px-2.5 py-2 rounded-md text-sm outline-none bg-transparent"
-        }, void 0, false), /*#__PURE__*/_jsxDEV("label", {
-          className: "text-xs",
-          style: {
-            color: MUTED
-          },
-          children: "Дата"
-        }, void 0, false), /*#__PURE__*/_jsxDEV("input", {
-          type: "date",
-          value: eventDraft.date,
-          onChange: e => setEventDraft({
-            ...eventDraft,
-            date: e.target.value
-          }),
-          style: {
-            border: `1px solid ${BORDER}`
-          },
-          className: "w-full mt-1 mb-3 px-2 py-2 rounded-md text-sm outline-none bg-transparent"
-        }, void 0, false), /*#__PURE__*/_jsxDEV("label", {
-          className: "text-xs",
-          style: {
-            color: MUTED
-          },
-          children: "Цвет"
-        }, void 0, false), /*#__PURE__*/_jsxDEV("div", {
-          className: "flex flex-wrap gap-2 mt-1 mb-4",
-          children: TASK_COLORS.map(c => /*#__PURE__*/_jsxDEV("button", {
-            title: c.name,
-            onClick: () => setEventDraft({
-              ...eventDraft,
-              color: c.hex
-            }),
-            style: {
-              background: c.hex,
-              boxShadow: eventDraft.color === c.hex ? `0 0 0 2px ${CARD_BG}, 0 0 0 4px ${c.hex}` : 'none'
-            },
-            className: "w-7 h-7 rounded-full"
-          }, c.hex, false))
-        }, void 0, false), eventErr && /*#__PURE__*/_jsxDEV("p", {
-          style: {
-            color: '#A32D2D'
-          },
-          className: "text-xs mb-3",
-          children: eventErr
-        }, void 0, false), /*#__PURE__*/_jsxDEV("button", {
-          onClick: submitEvent,
-          style: {
-            background: ACCENT,
-            color: '#fff'
-          },
-          className: "w-full py-2.5 rounded-md text-sm font-medium",
-          children: "Добавить дело"
-        }, void 0, false)]
-      }, void 0, true)
-    }, void 0, false)]
-  }, void 0, true);
+      className: "h-20 sm:h-24 rounded-md p-1.5 flex flex-col justify-between overflow-hidden relative"
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: filled ? '#fff' : isToday ? ACCENT : INK,
+        fontWeight: isToday ? 700 : 500
+      },
+      className: "text-xs sm:text-sm leading-none"
+    }, d), /*#__PURE__*/React.createElement("div", {
+      className: "flex flex-col gap-0.5 mt-auto"
+    }, eventsToday.slice(0, 2).map(e => /*#__PURE__*/React.createElement("span", {
+      key: e.id,
+      title: e.name,
+      style: {
+        background: e.color,
+        color: '#fff'
+      },
+      className: "text-[10px] leading-tight rounded px-1 py-0.5 truncate"
+    }, e.name)), eventsToday.length > 2 && /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: filled ? '#fff' : MUTED
+      },
+      className: "text-[10px]"
+    }, "+", eventsToday.length - 2)));
+  })), planningTask && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: '#F1EEE2',
+      border: `1px solid ${BORDER}`
+    },
+    className: "mt-4 rounded-md p-3 flex items-center justify-between gap-3 flex-wrap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 text-sm"
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      background: planningTask.color
+    },
+    className: "w-2.5 h-2.5 rounded-full inline-block"
+  }), /*#__PURE__*/React.createElement("span", null, "Режим планирования: ", /*#__PURE__*/React.createElement("b", null, planningTask.name), ". Кликайте по дням внутри рамки, чтобы отметить их полной заливкой.")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setPlanningTaskId(null),
+    style: {
+      background: ACCENT,
+      color: '#fff'
+    },
+    className: "text-sm px-3 py-1.5 rounded-md shrink-0"
+  }, "✓ Готово")), !planningTask && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: MUTED
+    },
+    className: "text-xs mt-4"
+  }, "Клик по дню создаёт разовое дело на эту дату. Чтобы распланировать дни задачи — нажмите «Планировать» у нужной задачи."))), /*#__PURE__*/React.createElement("div", {
+    className: "w-full lg:w-80 shrink-0 flex flex-col gap-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: CARD_BG,
+      border: `1px solid ${BORDER}`
+    },
+    className: "rounded-lg p-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between mb-3"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-sm font-semibold"
+  }, "▤ Задачи"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      setTaskDraft({
+        name: '',
+        start: today,
+        end: today,
+        color: TASK_COLORS[tasks.length % TASK_COLORS.length].hex
+      });
+      setTaskErr('');
+      setShowTaskForm(true);
+    },
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "w-8 h-8 rounded-md hover:opacity-70 flex items-center justify-center"
+  }, "+")), tasks.length === 0 && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: MUTED
+    },
+    className: "text-xs"
+  }, "Пока нет ни одной задачи."), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col gap-2"
+  }, tasks.map(t => {
+    const total = countDaysBetween(t.start, t.end);
+    const planned = t.plannedDays.length;
+    const isPlanning = planningTaskId === t.id;
+    return /*#__PURE__*/React.createElement("div", {
+      key: t.id,
+      style: {
+        border: `1px solid ${BORDER}`,
+        background: isPlanning ? '#F1EEE2' : 'transparent'
+      },
+      className: "rounded-md p-2.5"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-start justify-between gap-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-start gap-2 min-w-0"
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        background: t.color
+      },
+      className: "w-2.5 h-2.5 rounded-full inline-block mt-1 shrink-0"
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "min-w-0"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "text-sm font-medium truncate"
+    }, t.name), /*#__PURE__*/React.createElement("p", {
+      style: {
+        color: MUTED
+      },
+      className: "text-xs"
+    }, formatShort(t.start), " – ", formatShort(t.end)), /*#__PURE__*/React.createElement("p", {
+      style: {
+        color: MUTED
+      },
+      className: "text-xs"
+    }, planned, " / ", total, " дн. запланировано"))), /*#__PURE__*/React.createElement("button", {
+      onClick: () => deleteTask(t.id),
+      className: "shrink-0 p-1 hover:opacity-60",
+      "aria-label": "Удалить задачу"
+    }, "✕")), /*#__PURE__*/React.createElement("button", {
+      onClick: () => setPlanningTaskId(isPlanning ? null : t.id),
+      style: {
+        background: isPlanning ? ACCENT : 'transparent',
+        color: isPlanning ? '#fff' : INK,
+        border: `1px solid ${isPlanning ? ACCENT : BORDER}`
+      },
+      className: "w-full mt-2 text-xs py-2 rounded-md"
+    }, isPlanning ? 'Готово' : 'Планировать дни'));
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: CARD_BG,
+      border: `1px solid ${BORDER}`
+    },
+    className: "rounded-lg p-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between mb-3"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-sm font-semibold"
+  }, "◆ Разовые дела"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => openEventFormForDate(today),
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "w-8 h-8 rounded-md hover:opacity-70 flex items-center justify-center"
+  }, "+")), events.length === 0 && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: MUTED
+    },
+    className: "text-xs"
+  }, "Пока нет разовых дел."), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col gap-1.5 max-h-60 overflow-y-auto"
+  }, [...events].sort((a, b) => a.date.localeCompare(b.date)).map(e => /*#__PURE__*/React.createElement("div", {
+    key: e.id,
+    className: "flex items-center justify-between gap-2 text-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 min-w-0"
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      background: e.color
+    },
+    className: "w-2 h-2 rounded-full inline-block shrink-0"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "truncate"
+  }, e.name), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: MUTED
+    },
+    className: "text-xs shrink-0"
+  }, formatShort(e.date))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => deleteEvent(e.id),
+    className: "shrink-0 p-1 hover:opacity-60",
+    "aria-label": "Удалить дело"
+  }, "✕"))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: CARD_BG,
+      border: `1px solid ${BORDER}`
+    },
+    className: "rounded-lg p-4"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-sm font-semibold mb-3"
+  }, "☁ Синхронизация"), !sb && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: MUTED
+    },
+    className: "text-xs"
+  }, "Не настроена: впишите данные Supabase в файл config.js. Пока данные хранятся только на этом устройстве."), sb && !authReady && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: MUTED
+    },
+    className: "text-xs"
+  }, "Загрузка…"), sb && authReady && !user && /*#__PURE__*/React.createElement("form", {
+    onSubmit: e => {
+      e.preventDefault();
+      signIn();
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "email",
+    autoComplete: "email",
+    value: authDraft.email,
+    onChange: e => setAuthDraft({
+      ...authDraft,
+      email: e.target.value
+    }),
+    placeholder: "Почта",
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "w-full mb-2 px-2.5 py-2 rounded-md text-sm outline-none bg-transparent"
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "password",
+    autoComplete: "current-password",
+    value: authDraft.password,
+    onChange: e => setAuthDraft({
+      ...authDraft,
+      password: e.target.value
+    }),
+    placeholder: "Пароль",
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "w-full mb-3 px-2.5 py-2 rounded-md text-sm outline-none bg-transparent"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    disabled: authBusy,
+    style: {
+      background: ACCENT,
+      color: '#fff'
+    },
+    className: "flex-1 py-2 rounded-md text-sm font-medium"
+  }, "Войти"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    disabled: authBusy,
+    onClick: signUp,
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "flex-1 py-2 rounded-md text-sm"
+  }, "Создать")), syncMsg && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: '#A32D2D'
+    },
+    className: "text-xs mt-3"
+  }, syncMsg)), sb && authReady && user && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm truncate"
+  }, user.email), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: syncStatus === 'error' ? '#A32D2D' : MUTED
+    },
+    className: "text-xs mt-1"
+  }, statusLabel), syncStatus === 'error' && syncMsg && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: '#A32D2D'
+    },
+    className: "text-xs mt-1 break-words"
+  }, syncMsg), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-2 mt-3"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => pull(),
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "flex-1 py-2 rounded-md text-xs"
+  }, "Обновить"), /*#__PURE__*/React.createElement("button", {
+    onClick: signOut,
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "flex-1 py-2 rounded-md text-xs"
+  }, "Выйти")))), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: MUTED
+    },
+    className: "text-xs text-center"
+  }, user ? 'Данные хранятся на устройстве и в облаке.' : 'Данные хранятся локально на этом устройстве.'))), showTaskForm && /*#__PURE__*/React.createElement("div", {
+    className: "fixed inset-0 flex items-center justify-center p-4 z-50",
+    style: {
+      background: 'rgba(36,31,24,0.45)'
+    },
+    onClick: () => setShowTaskForm(false)
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: CARD_BG
+    },
+    onClick: e => e.stopPropagation(),
+    className: "rounded-lg p-5 w-full max-w-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between mb-4"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold"
+  }, "Новая задача"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowTaskForm(false),
+    className: "p-1"
+  }, "✕")), /*#__PURE__*/React.createElement("label", {
+    className: "text-xs",
+    style: {
+      color: MUTED
+    }
+  }, "Название"), /*#__PURE__*/React.createElement("input", {
+    value: taskDraft.name,
+    onChange: e => setTaskDraft({
+      ...taskDraft,
+      name: e.target.value
+    }),
+    placeholder: "Например, пошив партии сумок",
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "w-full mt-1 mb-3 px-2.5 py-2 rounded-md text-sm outline-none bg-transparent"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-2 mb-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex-1 min-w-0"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-xs",
+    style: {
+      color: MUTED
+    }
+  }, "Начало"), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: taskDraft.start,
+    onChange: e => setTaskDraft({
+      ...taskDraft,
+      start: e.target.value
+    }),
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "w-full mt-1 px-2 py-2 rounded-md text-sm outline-none bg-transparent"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex-1 min-w-0"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-xs",
+    style: {
+      color: MUTED
+    }
+  }, "Дедлайн"), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: taskDraft.end,
+    onChange: e => setTaskDraft({
+      ...taskDraft,
+      end: e.target.value
+    }),
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "w-full mt-1 px-2 py-2 rounded-md text-sm outline-none bg-transparent"
+  }))), /*#__PURE__*/React.createElement("label", {
+    className: "text-xs",
+    style: {
+      color: MUTED
+    }
+  }, "Цвет"), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-2 mt-1 mb-4"
+  }, TASK_COLORS.map(c => /*#__PURE__*/React.createElement("button", {
+    key: c.hex,
+    title: c.name,
+    onClick: () => setTaskDraft({
+      ...taskDraft,
+      color: c.hex
+    }),
+    style: {
+      background: c.hex,
+      boxShadow: taskDraft.color === c.hex ? `0 0 0 2px ${CARD_BG}, 0 0 0 4px ${c.hex}` : 'none'
+    },
+    className: "w-7 h-7 rounded-full"
+  }))), taskErr && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: '#A32D2D'
+    },
+    className: "text-xs mb-3"
+  }, taskErr), /*#__PURE__*/React.createElement("button", {
+    onClick: submitTask,
+    style: {
+      background: ACCENT,
+      color: '#fff'
+    },
+    className: "w-full py-2.5 rounded-md text-sm font-medium"
+  }, "Добавить задачу"))), showEventForm && /*#__PURE__*/React.createElement("div", {
+    className: "fixed inset-0 flex items-center justify-center p-4 z-50",
+    style: {
+      background: 'rgba(36,31,24,0.45)'
+    },
+    onClick: () => setShowEventForm(false)
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: CARD_BG
+    },
+    onClick: e => e.stopPropagation(),
+    className: "rounded-lg p-5 w-full max-w-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between mb-4"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold"
+  }, "Разовое дело"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowEventForm(false),
+    className: "p-1"
+  }, "✕")), /*#__PURE__*/React.createElement("label", {
+    className: "text-xs",
+    style: {
+      color: MUTED
+    }
+  }, "Название"), /*#__PURE__*/React.createElement("input", {
+    value: eventDraft.name,
+    onChange: e => setEventDraft({
+      ...eventDraft,
+      name: e.target.value
+    }),
+    placeholder: "Например, встреча с клиентом",
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "w-full mt-1 mb-3 px-2.5 py-2 rounded-md text-sm outline-none bg-transparent"
+  }), /*#__PURE__*/React.createElement("label", {
+    className: "text-xs",
+    style: {
+      color: MUTED
+    }
+  }, "Дата"), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: eventDraft.date,
+    onChange: e => setEventDraft({
+      ...eventDraft,
+      date: e.target.value
+    }),
+    style: {
+      border: `1px solid ${BORDER}`
+    },
+    className: "w-full mt-1 mb-3 px-2 py-2 rounded-md text-sm outline-none bg-transparent"
+  }), /*#__PURE__*/React.createElement("label", {
+    className: "text-xs",
+    style: {
+      color: MUTED
+    }
+  }, "Цвет"), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-2 mt-1 mb-4"
+  }, TASK_COLORS.map(c => /*#__PURE__*/React.createElement("button", {
+    key: c.hex,
+    title: c.name,
+    onClick: () => setEventDraft({
+      ...eventDraft,
+      color: c.hex
+    }),
+    style: {
+      background: c.hex,
+      boxShadow: eventDraft.color === c.hex ? `0 0 0 2px ${CARD_BG}, 0 0 0 4px ${c.hex}` : 'none'
+    },
+    className: "w-7 h-7 rounded-full"
+  }))), eventErr && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: '#A32D2D'
+    },
+    className: "text-xs mb-3"
+  }, eventErr), /*#__PURE__*/React.createElement("button", {
+    onClick: submitEvent,
+    style: {
+      background: ACCENT,
+      color: '#fff'
+    },
+    className: "w-full py-2.5 rounded-md text-sm font-medium"
+  }, "Добавить дело"))));
 }
-ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/_jsxDEV(App, {}, void 0, false));
+ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
